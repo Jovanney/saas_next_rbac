@@ -8,14 +8,21 @@ type PermissionsByRole = (
 ) => void
 
 export const permissions: Record<Role, PermissionsByRole> = {
-  ADMIN: (_, { can }) => {
+  ADMIN: (user, { can, cannot }) => {
+    // no momento em que eu dou o manage all para o role as condições de negação não funcionariam
     can('manage', 'all')
+
+    cannot(['transfer_ownership', 'update'], 'Organization')
+    can(['transfer_ownership', 'update'], 'Organization', {
+      owerId: { $eq: user.id },
+    })
   },
   MEMBER: (user, { can }) => {
-    can('create', 'Project')
-    can(['create', 'delete'], 'Project', { owerId: { $eq: user.id } })
+    can('get', 'User')
+    can(['create', 'get'], 'Project')
+    can(['delete', 'update'], 'Project', { owerId: { $eq: user.id } })
   },
   BILLING: (_, { can }) => {
-    can('invite', 'User')
+    can('manage', 'Billing')
   },
 }

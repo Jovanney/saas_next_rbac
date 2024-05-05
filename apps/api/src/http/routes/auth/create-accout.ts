@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { prisma } from '@/http/lib/prisma'
 import { hash } from 'bcryptjs'
+import { BadRequest } from '../_errors/bad-request-error'
 
 export async function createAccount(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -20,9 +21,6 @@ export async function createAccount(app: FastifyInstance) {
           201: z.object({
             message: z.string(),
           }),
-          400: z.object({
-            message: z.string(),
-          }),
         },
       },
     },
@@ -36,7 +34,7 @@ export async function createAccount(app: FastifyInstance) {
       })
 
       if (userWithSameEmail) {
-        return reply.status(400).send({ message: 'Email already in use' })
+        throw new BadRequest('Email already in use')
       }
 
       const [, domain] = email.split('@')

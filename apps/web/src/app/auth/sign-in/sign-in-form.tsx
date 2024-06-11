@@ -11,10 +11,15 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormState } from '@/hooks/use-form-state'
+import { useRouter } from 'next/navigation'
 
 export function SignInForm() {
+  const router = useRouter()
   const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    () => {
+      router.push('/')
+    }
   )
 
   return (

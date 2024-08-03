@@ -41,6 +41,12 @@ export async function shutdownOrganization(app: FastifyInstance) {
           throw new Unauthorized()
         }
 
+        await prisma.member.deleteMany({
+          where: {
+            organizationId: organization.id,
+          },
+        })
+
         await prisma.organization.delete({
           where: {
             id: organization.id,

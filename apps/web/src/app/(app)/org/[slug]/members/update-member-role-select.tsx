@@ -1,8 +1,9 @@
 'use client'
 
-import { Role } from '@saas/auth'
-import { ComponentProps } from 'react'
+import { type Role, roleSchema } from '@saas/auth'
+import type { ComponentProps } from 'react'
 
+import { updateMemberAction } from './actions'
 import {
   Select,
   SelectContent,
@@ -11,29 +12,32 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { updateMemberAction } from './actions'
-
-interface UpdateMemberRoleSelectProps extends ComponentProps<typeof Select> {
+type UpdateMemberRoleSelectProps = ComponentProps<typeof Select> & {
   memberId: string
 }
 
-export function UpdateMemberRoleSelect({
+export const UpdateMemberRoleSelect = ({
   memberId,
   ...props
-}: UpdateMemberRoleSelectProps) {
-  async function updateMemberRole(role: Role) {
+}: UpdateMemberRoleSelectProps) => {
+  const rolesArray = roleSchema.options.map((option) => option.value)
+
+  const updateMemberRole = async (role: Role) => {
     await updateMemberAction(memberId, role)
   }
 
   return (
     <Select onValueChange={updateMemberRole} {...props}>
-      <SelectTrigger className="h-8 w-32">
+      <SelectTrigger className="w-32">
         <SelectValue />
       </SelectTrigger>
+
       <SelectContent>
-        <SelectItem value="ADMIN">Admin</SelectItem>
-        <SelectItem value="MEMBER">Member</SelectItem>
-        <SelectItem value="BILLING">Billing</SelectItem>
+        {rolesArray.map((role) => (
+          <SelectItem key={role} value={role} className="capitalize">
+            {role}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   )

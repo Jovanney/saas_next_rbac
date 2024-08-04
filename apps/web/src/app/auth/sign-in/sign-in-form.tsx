@@ -11,10 +11,11 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormState } from '@/hooks/use-form-state'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function SignInForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
     signInWithEmailAndPassword,
     () => {
@@ -36,7 +37,12 @@ export function SignInForm() {
 
       <div className="space-y-1">
         <Label htmlFor="email">E-mail</Label>
-        <Input name="email" type="email" id="email" />
+        <Input
+          name="email"
+          type="email"
+          id="email"
+          defaultValue={searchParams.get('email') ?? ''}
+        />
 
         {errors?.email && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
